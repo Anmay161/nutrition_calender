@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nutrition_calender/pages/login_page.dart';
 import 'package:nutrition_calender/pages/navigate_page.dart';
 import 'package:nutrition_calender/pages/signin_page.dart';
+import 'package:nutrition_calender/pages/verification_page.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
