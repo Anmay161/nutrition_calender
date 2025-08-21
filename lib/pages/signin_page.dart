@@ -1,8 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nutrition_calender/components/home_page.dart';
 import 'package:nutrition_calender/pages/getting_started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nutrition_calender/constants/values.dart';
+
+class VerifyEmailPage extends StatefulWidget {
+  const VerifyEmailPage({super.key});
+
+  @override
+  State<VerifyEmailPage> createState() => _VerifyEmailPageState();
+}
+
+class _VerifyEmailPageState extends State<VerifyEmailPage> {
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _sendVerificationEmail();
+  }
+
+  Future<void> _sendVerificationEmail() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
+  }
+
+  Future<void> _checkVerification() async {
+    setState(() => _isSending = true);
+    await FirebaseAuth.instance.currentUser?.reload();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null && user.emailVerified) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => GettingStarted()),
+        );
+      }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Email not verified yet. Please check inbox.")),
+      );
+    }
+    setState(() => _isSending = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Verify Email")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "We sent a verification email. Please check your inbox.",
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _sendVerificationEmail,
+              child: const Text("Resend Email"),
+            ),
+            const SizedBox(height: 20),
+            _isSending
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                  onPressed: _checkVerification,
+                  child: const Text("I Verified, Continue"),
+                ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -42,18 +116,33 @@ class _LoginPageState extends State<SigninPage> {
       setState(() {
         _isloading = true;
       });
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text.trim(),
-      );
-      message = 'Sign in successfull';
+
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _email.text.trim(),
+            password: _password.text.trim(),
+          );
+
+      bool isNew = userCredential.additionalUserInfo?.isNewUser ?? false;
+
+      if (mounted) {
+        if (!isNew) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        }
+      }
+
+      message = 'Sign up successful. Please verify your email.';
       if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => GettingStarted()),
+          MaterialPageRoute(builder: (context) => const VerifyEmailPage()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -66,9 +155,6 @@ class _LoginPageState extends State<SigninPage> {
       }
     } finally {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
         setState(() {
           _isloading = false;
         });
@@ -78,11 +164,7 @@ class _LoginPageState extends State<SigninPage> {
 
   bool checkForm() {
     final form = _formkey.currentState!.validate();
-    if (!form) {
-      return false;
-    } else {
-      return true;
-    }
+    return form;
   }
 
   @override
@@ -92,13 +174,11 @@ class _LoginPageState extends State<SigninPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Backgroud-image
+            // Background
             _Methods._background,
-
-            // Image-bowl
+            // Bowl image
             _Methods._bowl,
-
-            // User-input
+            // Input form
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -106,7 +186,7 @@ class _LoginPageState extends State<SigninPage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.elliptical(50, 50),
                     topRight: Radius.elliptical(50, 50),
                   ),
@@ -114,9 +194,8 @@ class _LoginPageState extends State<SigninPage> {
                 child: ListView(
                   children: [
                     Container(
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       height: 25,
-
                       child: FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
@@ -124,56 +203,54 @@ class _LoginPageState extends State<SigninPage> {
                           style: GoogleFonts.merriweather(
                             fontSize: 32,
                             letterSpacing: 5,
-                            fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.bold,
                             color: Colors.blue,
                           ),
                         ),
                       ),
                     ),
-
-                    SizedBox(height: 20),
-
+                    const SizedBox(height: 20),
                     Form(
                       key: _formkey,
                       child: SingleChildScrollView(
                         child: Column(
                           spacing: 20,
                           children: [
+                            // Email field
                             SizedBox(
                               width: screensize.width * 0.85,
                               child: TextFormField(
                                 controller: _email,
                                 style: GoogleFonts.merriweather(fontSize: 15),
-                                enableSuggestions: false,
-                                autocorrect: false,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                   isDense: true,
                                   filled: true,
-                                  fillColor: Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Email',
                                   labelStyle: GoogleFonts.merriweather(
                                     color: Colors.brown,
                                   ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
-                                  errorBorder: _Methods._containerborder2,
-                                  focusedErrorBorder:
-                                      _Methods._containerborder1,
                                 ),
                                 validator: (newValue) {
                                   newValue = newValue?.trim();
-                                  if ((newValue == null) ||
-                                      (newValue.isEmpty) ||
-                                      (!(Regex.isValidEmail(newValue)))) {
+                                  if (newValue == null ||
+                                      newValue.isEmpty ||
+                                      !Regex.isValidEmail(newValue)) {
                                     return 'Please enter a valid email address';
                                   }
                                   return null;
                                 },
                               ),
                             ),
-
+                            // Password
                             SizedBox(
                               width: screensize.width * 0.85,
                               child: TextFormField(
@@ -195,29 +272,31 @@ class _LoginPageState extends State<SigninPage> {
                                     ),
                                   ),
                                   filled: true,
-                                  fillColor: Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Password',
                                   labelStyle: GoogleFonts.merriweather(
                                     color: Colors.brown,
                                   ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
-                                  errorBorder: _Methods._containerborder2,
-                                  focusedErrorBorder:
-                                      _Methods._containerborder1,
                                 ),
                                 validator: (newValue) {
                                   newValue = newValue?.trim();
-                                  if ((newValue == null) ||
-                                      (newValue.isEmpty) ||
-                                      (!(Regex.isValidPassword(newValue)))) {
-                                    return '''Password have to be at least 6 characters long\nAnd contains everything''';
+                                  if (newValue == null ||
+                                      newValue.isEmpty ||
+                                      !Regex.isValidPassword(newValue)) {
+                                    return '''Password must be at least 6 characters long''';
                                   }
                                   return null;
                                 },
                               ),
                             ),
-
+                            // Confirm password
                             SizedBox(
                               width: screensize.width * 0.85,
                               child: TextFormField(
@@ -226,43 +305,33 @@ class _LoginPageState extends State<SigninPage> {
                                 obscureText: !_icontoggle,
                                 decoration: InputDecoration(
                                   isDense: true,
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _icontoggle = !_icontoggle;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      (_icontoggle)
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                    ),
-                                  ),
                                   filled: true,
-                                  fillColor: Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Confirm Password',
                                   labelStyle: GoogleFonts.merriweather(
                                     color: Colors.brown,
                                   ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
-                                  errorBorder: _Methods._containerborder2,
-                                  focusedErrorBorder:
-                                      _Methods._containerborder1,
                                 ),
                                 validator: (newValue) {
-                                  newValue = newValue?.trim();
-                                  if ((newValue == null) ||
-                                      (_confirmPass.text != _password.text)) {
-                                    return 'The passwords have to be same';
+                                  if (newValue == null ||
+                                      newValue.trim() !=
+                                          _password.text.trim()) {
+                                    return 'Passwords must match';
                                   }
                                   return null;
                                 },
                               ),
                             ),
-
-                            (_isloading)
-                                ? CircularProgressIndicator()
+                            const SizedBox(height: 20),
+                            _isloading
+                                ? const CircularProgressIndicator()
                                 : GestureDetector(
                                   onTap: () {
                                     if (checkForm()) {
@@ -303,20 +372,18 @@ class _LoginPageState extends State<SigninPage> {
 }
 
 class _Methods {
-  // For the background color
   static final _background = Container(
     width: double.infinity,
     height: double.infinity,
-    decoration: BoxDecoration(color: Color.fromARGB(255, 248, 196, 148)),
+    color: const Color.fromARGB(255, 248, 196, 148),
   );
 
-  // For the bowl image
   static final _bowl = Align(
     alignment: Alignment.topCenter,
     child: Container(
       width: 350,
       height: 250,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/Login_Signin.png'),
           fit: BoxFit.fill,
@@ -328,11 +395,11 @@ class _Methods {
 
   static final _containerborder1 = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide(color: Colors.brown, width: 3),
+    borderSide: const BorderSide(color: Colors.brown, width: 3),
   );
 
   static final _containerborder2 = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide(color: Colors.white),
+    borderSide: const BorderSide(color: Colors.white),
   );
 }

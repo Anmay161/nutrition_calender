@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nutrition_calender/components/home_page.dart';
 import 'package:nutrition_calender/constants/values.dart';
 
 class GettingStarted extends StatefulWidget {
@@ -584,7 +585,9 @@ class _GettingStartedState extends State<GettingStarted> {
     final form2 = _formkey_2.currentState!.validate();
     if ((!form2) || (!firstcomplete)) {
       submit_1();
-    } else {}
+    } else {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
   }
 }
 

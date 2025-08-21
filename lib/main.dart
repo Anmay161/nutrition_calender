@@ -13,12 +13,9 @@ import 'package:nutrition_calender/pages/signin_page.dart';
 // ignore: unused_import
 import 'package:nutrition_calender/pages/welcome.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -37,6 +34,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
