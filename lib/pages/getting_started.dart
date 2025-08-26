@@ -1,7 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nutrition_calender/components/home_page.dart';
 import 'package:nutrition_calender/constants/values.dart';
+import 'package:nutrition_calender/pages/navigate_page.dart';
 
 class GettingStarted extends StatefulWidget {
   const GettingStarted({super.key});
@@ -12,15 +13,11 @@ class GettingStarted extends StatefulWidget {
 
 class _GettingStartedState extends State<GettingStarted> {
   final _formkey_1 = GlobalKey<FormState>();
-  // ignore: unused_field
-  final _formkey_2 = GlobalKey<FormState>();
 
   String firstbox = Values.list1[0];
   String secondbox = Values.list2[0];
   String thirdbox = Values.list3[0];
   String gender = Values.gender[0];
-  String _bmi = '';
-  bool firstcomplete = false;
 
   late TextEditingController height;
   late TextEditingController weight;
@@ -82,53 +79,6 @@ class _GettingStartedState extends State<GettingStarted> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 40),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Username:',
-                        style: GoogleFonts.merriweather(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 5),
-
-                    SizedBox(
-                      width: 150,
-                      child: TextFormField(
-                        controller: username,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please fill up this section';
-                          }
-                          return null;
-                        },
-                        style: GoogleFonts.merriweather(fontSize: 10),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 181, 187, 155),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 3,
-                            vertical: 6,
-                          ),
-                          focusedBorder: containerborder,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                            ),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorBorder: containerborder,
-                          focusedErrorBorder: containerborder,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 5),
 
                     Align(
                       alignment: Alignment.topLeft,
@@ -200,6 +150,12 @@ class _GettingStartedState extends State<GettingStarted> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please fill up this section';
+                          }
+                          try {
+                            int check = int.parse(value.trim());
+                            if (check <= 0) return 'Enter valid values';
+                          } catch (e) {
+                            return 'Enter valid values';
                           }
                           return null;
                         },
@@ -325,48 +281,7 @@ class _GettingStartedState extends State<GettingStarted> {
 
                     SizedBox(height: 20),
 
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            submit_1();
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 60,
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: Text(
-                                'Calculate',
-                                style: GoogleFonts.merriweather(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(width: 10),
-                        Text((_bmi.isEmpty) ? '' : "Your BMI is: $_bmi"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Form 2
-            Form(
-              key: _formkey_2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                    // Form 2
                     SizedBox(height: 40),
                     Align(
                       alignment: Alignment.topLeft,
@@ -562,31 +477,17 @@ class _GettingStartedState extends State<GettingStarted> {
     );
   }
 
-  void submit_1() {
+
+
+  void submit_2() {
     final form1 = _formkey_1.currentState!.validate();
 
     if (!form1) {
     } else {
-      _formkey_1.currentState!.save();
-      setState(() {
-        try {
-          var heightint = int.parse(height.text.trim()) / 100.0;
-          var weightint = int.parse(weight.text.trim());
-          _bmi = (weightint / (heightint * heightint)).toString();
-          firstcomplete = true;
-        } catch (e) {
-          _bmi = 'Wrong Input --';
-        }
-      });
-    }
-  }
-
-  void submit_2() {
-    final form2 = _formkey_2.currentState!.validate();
-    if ((!form2) || (!firstcomplete)) {
-      submit_1();
-    } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NavigatePage()),
+      );
     }
   }
 }

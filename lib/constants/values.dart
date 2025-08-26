@@ -7,12 +7,13 @@ class Values {
 
 class Regex {
   static final RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final RegExp emailRegex2 = RegExp(r'^(cse|law|eee|civil)_01\d{14}@lus.ac.bd$');
   static final RegExp passwordRegex = RegExp(
     r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
   );
 
   static bool isValidEmail(String email) {
-    return emailRegex.hasMatch(email);
+    return (emailRegex.hasMatch(email) || emailRegex2.hasMatch(email));
   }
   static bool isValidPassword(String password) {
     return passwordRegex.hasMatch(password);
