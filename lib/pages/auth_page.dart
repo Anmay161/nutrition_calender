@@ -23,10 +23,7 @@ class AuthWrapper extends StatelessWidget {
         }
         // final user = snapshot.data!;
         // logged in but email not verified
-        final user = snapshot.data!;
-        if (!user.emailVerified) {
-          return const VerifyEmailPage();
-        }
+        // final user = snapshot.data!;
         // logged in and verified
         return const NavigatePage();
       },

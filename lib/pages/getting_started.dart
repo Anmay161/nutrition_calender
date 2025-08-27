@@ -1,4 +1,5 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutrition_calender/constants/values.dart';
@@ -28,7 +29,6 @@ class _GettingStartedState extends State<GettingStarted> {
   void initState() {
     height = TextEditingController();
     weight = TextEditingController();
-    username = TextEditingController();
     age = TextEditingController();
     super.initState();
   }
@@ -477,18 +477,51 @@ class _GettingStartedState extends State<GettingStarted> {
     );
   }
 
-
-
-  void submit_2() {
+  Future<void> submit_2() async {
     final form1 = _formkey_1.currentState!.validate();
 
     if (!form1) {
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => NavigatePage()),
-      );
+      bool check = await updateUserData();
+
+      if (mounted) {
+        if (check) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => NavigatePage()),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Something went wrong")));
+        }
+      }
     }
+  }
+
+  Future<bool> updateUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+
+    try {
+      await userRef.update({
+        'Height': height.text.trim(),
+        'Weight': weight.text.trim(),
+        'Gender': gender,
+        'Goal': firstbox,
+        'BMI':
+            (int.parse(weight.text.trim()) /
+                ((int.parse(height.text.trim()) * 0.01) *
+                    (int.parse(height.text.trim()) * 0.01))),
+      });
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 }
 

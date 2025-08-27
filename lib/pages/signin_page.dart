@@ -94,7 +94,10 @@ class _LoginPageState extends State<SigninPage> {
             size: 18,
           ),
           const SizedBox(width: 6),
-          Text(text, style: TextStyle(color: condition ? Colors.green : Colors.red)),
+          Text(
+            text,
+            style: TextStyle(color: condition ? Colors.green : Colors.red),
+          ),
         ],
       );
     }
@@ -120,9 +123,9 @@ class _LoginPageState extends State<SigninPage> {
 
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text.trim(),
-      );
+            email: _email.text.trim(),
+            password: _password.text.trim(),
+          );
 
       bool isNew = userCredential.additionalUserInfo?.isNewUser ?? false;
 
@@ -143,7 +146,14 @@ class _LoginPageState extends State<SigninPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const VerifyEmailPage()),
+          MaterialPageRoute(
+            builder:
+                (context) => VerifyEmailPage(
+                  userName: _username.text.trim(),
+                  phone: _mobile.text.trim(),
+                  email: _email.text.trim(),
+                ),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -155,7 +165,9 @@ class _LoginPageState extends State<SigninPage> {
           message = 'Something went wrong. Please try again.';
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
       if (mounted) {
@@ -226,14 +238,22 @@ class _LoginPageState extends State<SigninPage> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   filled: true,
-                                  fillColor: const Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Username',
-                                  labelStyle: GoogleFonts.merriweather(color: Colors.brown),
+                                  labelStyle: GoogleFonts.merriweather(
+                                    color: Colors.brown,
+                                  ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
                                 ),
                                 validator: (newValue) {
-                                  if (newValue == null || newValue.trim().isEmpty) {
+                                  if (newValue == null ||
+                                      newValue.trim().isEmpty) {
                                     return 'Please enter a username';
                                   }
                                   return null;
@@ -250,18 +270,28 @@ class _LoginPageState extends State<SigninPage> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   filled: true,
-                                  fillColor: const Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Mobile Number',
                                   hintText: 'e.g. +8801XXXXXXXXX',
-                                  labelStyle: GoogleFonts.merriweather(color: Colors.brown),
+                                  labelStyle: GoogleFonts.merriweather(
+                                    color: Colors.brown,
+                                  ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
                                 ),
                                 validator: (newValue) {
-                                  if (newValue == null || newValue.trim().isEmpty) {
+                                  if (newValue == null ||
+                                      newValue.trim().isEmpty) {
                                     return 'Please enter mobile number';
                                   }
-                                  if (!RegExp(r'^\+?[0-9]{10,13}$').hasMatch(newValue.trim())) {
+                                  if (!RegExp(
+                                    r'^\+?[0-9]{10,13}$',
+                                  ).hasMatch(newValue.trim())) {
                                     return 'Enter a valid mobile number';
                                   }
                                   return null;
@@ -278,9 +308,16 @@ class _LoginPageState extends State<SigninPage> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   filled: true,
-                                  fillColor: const Color.fromARGB(255, 248, 233, 148),
+                                  fillColor: const Color.fromARGB(
+                                    255,
+                                    248,
+                                    233,
+                                    148,
+                                  ),
                                   labelText: 'Email',
-                                  labelStyle: GoogleFonts.merriweather(color: Colors.brown),
+                                  labelStyle: GoogleFonts.merriweather(
+                                    color: Colors.brown,
+                                  ),
                                   focusedBorder: _Methods._containerborder1,
                                   enabledBorder: _Methods._containerborder2,
                                 ),
@@ -310,13 +347,14 @@ class _LoginPageState extends State<SigninPage> {
                                   LinearProgressIndicator(
                                     value: _passwordStrength,
                                     backgroundColor: Colors.grey[300],
-                                    color: _passwordStrength <= 0.25
-                                        ? Colors.red
-                                        : _passwordStrength <= 0.5
+                                    color:
+                                        _passwordStrength <= 0.25
+                                            ? Colors.red
+                                            : _passwordStrength <= 0.5
                                             ? Colors.orange
                                             : _passwordStrength <= 0.75
-                                                ? Colors.blue
-                                                : Colors.green,
+                                            ? Colors.blue
+                                            : Colors.green,
                                     minHeight: 6,
                                   ),
                                   const SizedBox(height: 5),
@@ -324,13 +362,14 @@ class _LoginPageState extends State<SigninPage> {
                                     _passwordStrengthText,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: _passwordStrength <= 0.25
-                                          ? Colors.red
-                                          : _passwordStrength <= 0.5
+                                      color:
+                                          _passwordStrength <= 0.25
+                                              ? Colors.red
+                                              : _passwordStrength <= 0.5
                                               ? Colors.orange
                                               : _passwordStrength <= 0.75
-                                                  ? Colors.blue
-                                                  : Colors.green,
+                                              ? Colors.blue
+                                              : Colors.green,
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -338,7 +377,9 @@ class _LoginPageState extends State<SigninPage> {
                                   // ✅ Password field
                                   TextFormField(
                                     controller: _password,
-                                    style: GoogleFonts.merriweather(fontSize: 15),
+                                    style: GoogleFonts.merriweather(
+                                      fontSize: 15,
+                                    ),
                                     obscureText: !_icontoggle,
                                     onChanged: _checkPasswordStrength,
                                     decoration: InputDecoration(
@@ -350,19 +391,29 @@ class _LoginPageState extends State<SigninPage> {
                                           });
                                         },
                                         icon: Icon(
-                                          (_icontoggle) ? Icons.visibility : Icons.visibility_off,
+                                          (_icontoggle)
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: const Color.fromARGB(255, 248, 233, 148),
+                                      fillColor: const Color.fromARGB(
+                                        255,
+                                        248,
+                                        233,
+                                        148,
+                                      ),
                                       labelText: 'Password',
-                                      labelStyle: GoogleFonts.merriweather(color: Colors.brown),
+                                      labelStyle: GoogleFonts.merriweather(
+                                        color: Colors.brown,
+                                      ),
                                       focusedBorder: _Methods._containerborder1,
                                       enabledBorder: _Methods._containerborder2,
                                     ),
                                     validator: (newValue) {
                                       newValue = newValue?.trim();
-                                      if (newValue == null || newValue.isEmpty) {
+                                      if (newValue == null ||
+                                          newValue.isEmpty) {
                                         return 'Password is required';
                                       }
 
@@ -377,20 +428,31 @@ class _LoginPageState extends State<SigninPage> {
                                   // ✅ Confirm Password field
                                   TextFormField(
                                     controller: _confirmPass,
-                                    style: GoogleFonts.merriweather(fontSize: 15),
+                                    style: GoogleFonts.merriweather(
+                                      fontSize: 15,
+                                    ),
                                     obscureText: !_icontoggle,
                                     decoration: InputDecoration(
                                       isDense: true,
                                       filled: true,
-                                      fillColor: const Color.fromARGB(255, 248, 233, 148),
+                                      fillColor: const Color.fromARGB(
+                                        255,
+                                        248,
+                                        233,
+                                        148,
+                                      ),
                                       labelText: 'Confirm Password',
                                       hintText: 'Re-enter your password',
-                                      labelStyle: GoogleFonts.merriweather(color: Colors.brown),
+                                      labelStyle: GoogleFonts.merriweather(
+                                        color: Colors.brown,
+                                      ),
                                       focusedBorder: _Methods._containerborder1,
                                       enabledBorder: _Methods._containerborder2,
                                     ),
                                     validator: (newValue) {
-                                      if (newValue == null || newValue.trim() != _password.text.trim()) {
+                                      if (newValue == null ||
+                                          newValue.trim() !=
+                                              _password.text.trim()) {
                                         return 'Passwords must match';
                                       }
                                       return null;
@@ -405,30 +467,30 @@ class _LoginPageState extends State<SigninPage> {
                             _isloading
                                 ? const CircularProgressIndicator()
                                 : GestureDetector(
-                                    onTap: () {
-                                      if (checkForm()) {
-                                        addUser();
-                                      }
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      width: screensize.width * 0.85,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: Colors.black,
-                                      ),
-                                      child: Text(
-                                        'Sign in',
-                                        style: GoogleFonts.merriweather(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 2,
-                                        ),
+                                  onTap: () {
+                                    if (checkForm()) {
+                                      addUser();
+                                    }
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: screensize.width * 0.85,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.black,
+                                    ),
+                                    child: Text(
+                                      'Sign in',
+                                      style: GoogleFonts.merriweather(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2,
                                       ),
                                     ),
                                   ),
-                                const SizedBox(height: 20),
+                                ),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),

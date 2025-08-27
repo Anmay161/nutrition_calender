@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     getdate = cleandate;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: DatePicker(
           DateTime.now(),
           initialSelectedDate: selectedDate,
