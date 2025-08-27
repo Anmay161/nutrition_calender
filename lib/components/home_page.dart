@@ -21,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var cleandate = selectedDate.toString().split(' ').first;
-    getdate = cleandate;
+    getdate = cleandate; 
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -37,132 +38,123 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        margin: EdgeInsets.only(top: 10.0),
+        margin: const EdgeInsets.only(top: 10.0),
         child: ListView(
           children: [
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
-                  Text('Carbs'),
-                  Slider(
-                    value: carbSlider,
-                    onChanged: (value) {
-                      setState(() {
-                        carbSlider = value;
-                      });
-                    },
-                  ),
-
-                  Text('Proteins'),
-                  Slider(
-                    value: proteinSldier,
-                    onChanged: (value) {
-                      setState(() {
-                        proteinSldier = value;
-                      });
-                    },
-                  ),
-              
-
-                  Text('Fat'),
-                  Slider(
-                    value: fatSlider,
-                    onChanged: (value) {
-                      setState(() {
-                        fatSlider = value;
-                      });
-                    },
-                  ),
-              
-
-                  Text('Vitamins'),
-                  Slider(
-                    value: vitaminSlider,
-                    onChanged: (value) {
-                      setState(() {
-                        vitaminSlider = value;
-                      });
-                    },
-                  ),
-
-                  Text('Salt'),
-                  Slider(
-                    value: saltSlider,
-                    onChanged: (value) {
-                      setState(() {
-                        saltSlider = value;
-                      });
-                    },
-                  ),
+                  buildSliderRow('Carbs', carbSlider, (value) {
+                    setState(() {
+                      carbSlider = value;
+                    });
+                  }),
+                  buildSliderRow('Proteins', proteinSldier, (value) {
+                    setState(() {
+                      proteinSldier = value;
+                    });
+                  }),
+                  buildSliderRow('Fat', fatSlider, (value) {
+                    setState(() {
+                      fatSlider = value;
+                    });
+                  }),
+                  buildSliderRow('Vitamins', vitaminSlider, (value) {
+                    setState(() {
+                      vitaminSlider = value;
+                    });
+                  }),
+                  buildSliderRow('Salt', saltSlider, (value) {
+                    setState(() {
+                      saltSlider = value;
+                    });
+                  }),
                 ],
               ),
             ),
             ListTile(
-              title: Text('Breakfast'),
+              title: const Text('Breakfast'),
               trailing: IconButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => SelectItems(date: cleandate, time: 0),
+                      builder: (context) => SelectItems(date: cleandate, time: 0),
                     ),
                   );
                 },
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
               ),
             ),
             ListTile(
-              title: Text('Lunch'),
+              title: const Text('Lunch'),
               trailing: IconButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => SelectItems(date: cleandate, time: 1),
+                      builder: (context) => SelectItems(date: cleandate, time: 1),
                     ),
                   );
                 },
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
               ),
             ),
             ListTile(
-              title: Text('Dinner'),
+              title: const Text('Dinner'),
               trailing: IconButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => SelectItems(date: cleandate, time: 2),
+                      builder: (context) => SelectItems(date: cleandate, time: 2),
                     ),
                   );
                 },
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
               ),
             ),
             ListTile(
-              title: Text('Other'),
+              title: const Text('Other'),
               trailing: IconButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => SelectItems(date: cleandate, time: 3),
+                      builder: (context) => SelectItems(date: cleandate, time: 3),
                     ),
                   );
                 },
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+
+  Widget buildSliderRow(String label, double value, ValueChanged<double> onChanged) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(value.toStringAsFixed(1), style: const TextStyle(fontSize: 16)),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: 0,
+          max: 100,
+          onChanged: onChanged,
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 }
