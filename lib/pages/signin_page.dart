@@ -61,7 +61,8 @@ class _LoginPageState extends State<SigninPage> {
     if (password.contains(RegExp(r'[A-Z]'))) strength += 0.25;
     if (password.contains(RegExp(r'[a-z]'))) strength += 0.25;
     if (password.contains(RegExp(r'\d'))) strength += 0.125;
-    if (password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) strength += 0.125;
+    if (password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]')))
+      strength += 0.125;
 
     setState(() {
       _passwordStrength = strength;
@@ -339,41 +340,6 @@ class _LoginPageState extends State<SigninPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // ✅ Password requirements checklist
-                                  _buildPasswordRequirements(_password.text),
-                                  const SizedBox(height: 10),
-
-                                  // ✅ Strength Indicator
-                                  LinearProgressIndicator(
-                                    value: _passwordStrength,
-                                    backgroundColor: Colors.grey[300],
-                                    color:
-                                        _passwordStrength <= 0.25
-                                            ? Colors.red
-                                            : _passwordStrength <= 0.5
-                                            ? Colors.orange
-                                            : _passwordStrength <= 0.75
-                                            ? Colors.blue
-                                            : Colors.green,
-                                    minHeight: 6,
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    _passwordStrengthText,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          _passwordStrength <= 0.25
-                                              ? Colors.red
-                                              : _passwordStrength <= 0.5
-                                              ? Colors.orange
-                                              : _passwordStrength <= 0.75
-                                              ? Colors.blue
-                                              : Colors.green,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-
                                   // ✅ Password field
                                   TextFormField(
                                     controller: _password,
@@ -423,7 +389,7 @@ class _LoginPageState extends State<SigninPage> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 20),
 
                                   // ✅ Confirm Password field
                                   TextFormField(
@@ -458,11 +424,46 @@ class _LoginPageState extends State<SigninPage> {
                                       return null;
                                     },
                                   ),
+
+                                  const SizedBox(height: 10),
+                                  // ✅ Password requirements checklist
+                                  _buildPasswordRequirements(_password.text),
+                                  const SizedBox(height: 10),
+
+                                  // ✅ Strength Indicator
+                                  LinearProgressIndicator(
+                                    value: _passwordStrength,
+                                    backgroundColor: Colors.grey[300],
+                                    color:
+                                        _passwordStrength <= 0.25
+                                            ? Colors.red
+                                            : _passwordStrength <= 0.5
+                                            ? Colors.orange
+                                            : _passwordStrength <= 0.75
+                                            ? Colors.blue
+                                            : Colors.green,
+                                    minHeight: 6,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    _passwordStrengthText,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          _passwordStrength <= 0.25
+                                              ? Colors.red
+                                              : _passwordStrength <= 0.5
+                                              ? Colors.orange
+                                              : _passwordStrength <= 0.75
+                                              ? Colors.blue
+                                              : Colors.green,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
                                 ],
                               ),
                             ),
 
-                            const SizedBox(height: 20),
 
                             _isloading
                                 ? const CircularProgressIndicator()

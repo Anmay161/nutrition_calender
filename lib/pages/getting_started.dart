@@ -206,6 +206,12 @@ class _GettingStartedState extends State<GettingStarted> {
                           if (value!.isEmpty) {
                             return 'Please fill up this section';
                           }
+                          try {
+                            int check = int.parse(value.trim());
+                            if (check <= 0) return 'Enter valid values';
+                          } catch (e) {
+                            return 'Enter valid values';
+                          }
                           return null;
                         },
                         decoration: InputDecoration(
