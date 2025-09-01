@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nutrition_calender/pages/auth_page.dart';
 import 'package:nutrition_calender/pages/signin_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AuthWrapper()));
       }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

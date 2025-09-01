@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutrition_calender/components/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nutrition_calender/constants/values.dart';
+import 'package:nutrition_calender/pages/login_page.dart';
 import 'package:nutrition_calender/pages/verification_page.dart';
 
 class SigninPage extends StatefulWidget {
@@ -213,7 +215,7 @@ class _LoginPageState extends State<SigninPage> {
                       child: FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
-                          'Sign in',
+                          'Sign up',
                           style: GoogleFonts.merriweather(
                             fontSize: 32,
                             letterSpacing: 5,
@@ -482,7 +484,7 @@ class _LoginPageState extends State<SigninPage> {
                                       color: Colors.black,
                                     ),
                                     child: Text(
-                                      'Sign in',
+                                      'Sign up',
                                       style: GoogleFonts.merriweather(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -492,6 +494,37 @@ class _LoginPageState extends State<SigninPage> {
                                   ),
                                 ),
                             const SizedBox(height: 20),
+                            
+                            RichText(
+                              text: TextSpan(
+                                text: 'Already have an account? ',
+                                style: GoogleFonts.merriweather(
+                                  color: Colors.black,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'log in',
+                                    style: GoogleFonts.merriweather(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer:
+                                        TapGestureRecognizer()
+                                          ..onTap = () {
+                                            // Navigate to signup page
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => LoginPage(),
+                                              ),
+                                            );
+                                          },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 40,)
                           ],
                         ),
                       ),

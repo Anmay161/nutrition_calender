@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart' as timeline;
 import 'package:nutrition_calender/components/select_items.dart';
 import 'package:nutrition_calender/components/data_dummy.dart';
+import 'package:date_picker_plus/date_picker_plus.dart' as plus;
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var selectedDate = DateTime.now();
+  var startDate = DateTime.now();
   double carbSlider = 0;
   double proteinSldier = 0;
   double fatSlider = 0;
@@ -24,17 +27,56 @@ class _HomePageState extends State<HomePage> {
     getdate = cleandate; 
 
     return Scaffold(
-      appBar: AppBar(
+            appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: DatePicker(
-          DateTime.now(),
-          initialSelectedDate: selectedDate,
-          selectionColor: Colors.black,
-          onDateChange: (date) {
-            setState(() {
-              selectedDate = date;
-            });
-          },
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: timeline.DatePicker(
+                startDate,
+                initialSelectedDate: selectedDate,
+                selectionColor: Colors.black,
+                onDateChange: (date) {
+                  setState(() {
+                    selectedDate = date;
+                  });
+                },
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.calendar_today),
+              onPressed: () async {
+                final picked = await showDialog<DateTime>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: SizedBox(
+                        height: 350,
+                        width: 350,
+                        child: FittedBox(
+                          child: plus.DatePicker(
+                            minDate: DateTime(2020, 1, 1),
+                            maxDate: DateTime(2030, 12, 31),
+                            initialDate: selectedDate,
+                            onDateSelected: (date) {
+                              Navigator.of(context).pop(date);
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+
+                if (picked != null) {
+                  setState(() {
+                    startDate = picked;
+                  });
+                }
+              },
+            ),
+          ],
         ),
       ),
       body: Container(
