@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutrition_calender/components/data_dummy.dart';
-
-
+import 'package:nutrition_calender/components/search_items.dart';
 
 class SelectItems extends StatefulWidget {
   String date = '';
@@ -16,7 +15,6 @@ class _SelectItemsState extends State<SelectItems> {
   @override
   Widget build(BuildContext context) {
     var value = getSelectedList(check[widget.date], widget.time);
-
     return Scaffold(
       appBar: AppBar(title: Text('Food')),
       body: ListView.builder(
@@ -37,13 +35,25 @@ class _SelectItemsState extends State<SelectItems> {
       ),
       bottomNavigationBar: IconButton(
         onPressed: () {
-          if (!check.containsKey(widget.date)) {
-            check[widget.date] = EatingTime();
-            value = getSelectedList(check[widget.date], widget.time);
-          }
-          setState(() {
-            value.add(Item('Pizza', false));
-          });
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                insetPadding: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: SearchItems(
+                    date: widget.date,
+                    time: widget.time,
+                  ),
+                ),
+              );
+            },
+          );
         },
         icon: Icon(Icons.add),
       ),

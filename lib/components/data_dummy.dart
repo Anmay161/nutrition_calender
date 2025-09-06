@@ -34,7 +34,7 @@ Map<String, EatingTime> check = {
         ..dinner = [Item("Fish", false), Item("Rice", true)]
         ..other = [Item("Ice Cream", false)],
 
-  "2025-08-18":
+  "2025-09-10":
       EatingTime()
         ..breakfast = [
           Item("Bread", true),

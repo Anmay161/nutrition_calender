@@ -238,13 +238,23 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.add_circle, color: Colors.green),
+          icon: const Icon(Icons.edit, color: Colors.green),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SelectItems(date: date, time: time),
-              ),
+            showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  insetPadding: const EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: SelectItems(date: date, time: time),
+                  ),
+                );
+              },
             );
           },
         ),
