@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -36,10 +33,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -59,4 +53,23 @@ class DefaultFirebaseOptions {
     projectId: 'nutri-cal-v1',
     storageBucket: 'nutri-cal-v1.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBaDdj_ZIXPEfD4QMwm1BCzoCLQYn4odkU',
+    appId: '1:676581117939:web:2aa010a3abef55810e0c86',
+    messagingSenderId: '676581117939',
+    projectId: 'nutri-cal-v1',
+    authDomain: 'nutri-cal-v1.firebaseapp.com',
+    storageBucket: 'nutri-cal-v1.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBaDdj_ZIXPEfD4QMwm1BCzoCLQYn4odkU',
+    appId: '1:676581117939:web:6319c1571b453c3e0e0c86',
+    messagingSenderId: '676581117939',
+    projectId: 'nutri-cal-v1',
+    authDomain: 'nutri-cal-v1.firebaseapp.com',
+    storageBucket: 'nutri-cal-v1.firebasestorage.app',
+  );
+
 }
