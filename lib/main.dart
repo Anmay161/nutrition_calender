@@ -9,13 +9,23 @@ import 'package:nutrition_calender/components/home_page.dart';
 import 'package:nutrition_calender/pages/login_page.dart';
 // ignore: unused_import
 import 'package:nutrition_calender/pages/signin_page.dart';
-
+import 'package:nutrition_calender/components/nutrition_models.dart';
 // ignore: unused_import
 import 'package:nutrition_calender/pages/welcome.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(ItemDataAdapter());
+  Hive.registerAdapter(EatingTimeDataAdapter());
+
+  await Hive.openBox('nutrition');
+  
+  
   runApp(const MyApp());
 }
 

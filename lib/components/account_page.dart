@@ -10,6 +10,12 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  static final List<String> list1 = [
+    'Weight Loss',
+    'Weight Gain',
+    'Stay Healthy',
+  ];
+
   void showEditDialog(BuildContext context) async {
     final data = await getUserData();
     final userData = data.data() ?? {};
@@ -20,8 +26,9 @@ class _AccountPageState extends State<AccountPage> {
     final TextEditingController weightController = TextEditingController(
       text: userData['Weight']?.toString() ?? '',
     );
-    String selectedGoal = userData['Goal'] ?? 'Stay Healthy';
-
+    String selectedGoal =
+        list1.contains(userData['Goal']) ? userData['Goal'] : 'Stay Healthy';
+    
     showDialog(
       context: context,
       builder:
@@ -136,7 +143,7 @@ class _AccountPageState extends State<AccountPage> {
             },
             icon: const Icon(Icons.edit),
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();

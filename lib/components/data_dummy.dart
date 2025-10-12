@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-
-// --- Reactive models ---
+import 'package:hive_flutter/hive_flutter.dart';
+import 'nutrition_models.dart';
 
 class Item {
   final RxString name;
@@ -12,7 +12,6 @@ class Item {
       state = state.obs,
       amount = amount.obs;
 
-  // convenience getters/setters
   String get Name => name.value;
   set Name(String v) => name.value = v;
 
@@ -24,31 +23,109 @@ class Item {
 }
 
 class EatingTime {
-  // Reactive lists
   final RxList<Item> breakfast = <Item>[].obs;
   final RxList<Item> lunch = <Item>[].obs;
   final RxList<Item> dinner = <Item>[].obs;
   final RxList<Item> other = <Item>[].obs;
 
-  // helper to check emptiness
   bool get isEmpty =>
       breakfast.isEmpty && lunch.isEmpty && dinner.isEmpty && other.isEmpty;
 }
-// --- Controller ---
 
 class NutritionController extends GetxController {
-  // reactive map: date -> EatingTime
   final RxMap<String, EatingTime> check = <String, EatingTime>{}.obs;
+  final RxString currentDate = DateTime.now().toString().split(' ').first.obs;
 
-  // optional: current date
-  RxString currentDate = DateTime.now().toString().split(' ').first.obs;
+  late Box box;
 
-  // ensure an EatingTime exists for date
-  EatingTime getOrCreateEatingTime(String date) {
-    return check.putIfAbsent(date, () => EatingTime());
+  @override
+  void onInit() {
+    super.onInit();
+    box = Hive.box('nutrition');
+    _loadFromHive();
+
+    // Save when the map itself changes
+    ever(check, (_) => _saveToHive());
+
+    // Attach listeners to all loaded EatingTime objects
+    check.forEach((date, et) => _attachEatingTimeListeners(et, date));
   }
 
-  // add item to a meal
+  // --- Conversion methods ---
+  ItemData toItemData(Item i) => ItemData(i.Name, i.State, i.Amount);
+  Item fromItemData(ItemData d) => Item(d.name, d.state, amount: d.amount);
+
+  EatingTimeData toEatingTimeData(EatingTime e) => EatingTimeData(
+    breakfast: e.breakfast.map(toItemData).toList(),
+    lunch: e.lunch.map(toItemData).toList(),
+    dinner: e.dinner.map(toItemData).toList(),
+    other: e.other.map(toItemData).toList(),
+  );
+
+  EatingTime fromEatingTimeData(EatingTimeData d) =>
+      EatingTime()
+        ..breakfast.addAll(d.breakfast.map(fromItemData))
+        ..lunch.addAll(d.lunch.map(fromItemData))
+        ..dinner.addAll(d.dinner.map(fromItemData))
+        ..other.addAll(d.other.map(fromItemData));
+
+  // --- Hive handling ---
+  void _loadFromHive() {
+    for (var key in box.keys) {
+      final etData = box.get(key) as EatingTimeData?;
+      if (etData != null) {
+        final et = fromEatingTimeData(etData);
+        check[key] = et;
+        _attachEatingTimeListeners(et, key); // listen to inner changes
+      }
+    }
+  }
+
+  void _saveToHive() {
+    for (var entry in check.entries) {
+      box.put(entry.key, toEatingTimeData(entry.value));
+    }
+  }
+
+  // --- Attach listeners to all Rx fields inside EatingTime ---
+  void _attachEatingTimeListeners(EatingTime et, String date) {
+    void attachToList(RxList<Item> list) {
+      // Listen for additions/removals
+      list.listen((_) => check[date] = et);
+
+      // Listen for each item field
+      for (var item in list) {
+        item.name.listen((_) => check[date] = et);
+        item.state.listen((_) => check[date] = et);
+        item.amount.listen((_) => check[date] = et);
+      }
+
+      // Listen for new items added dynamically
+      list.listen((items) {
+        for (var item in items) {
+          item.name.listen((_) => check[date] = et);
+          item.state.listen((_) => check[date] = et);
+          item.amount.listen((_) => check[date] = et);
+        }
+      });
+    }
+
+    attachToList(et.breakfast);
+    attachToList(et.lunch);
+    attachToList(et.dinner);
+    attachToList(et.other);
+  }
+
+  // --- Core actions ---
+  EatingTime getOrCreateEatingTime(String date) {
+    final et = check.putIfAbsent(date, () {
+      final newEt = EatingTime();
+      _attachEatingTimeListeners(newEt, date);
+      return newEt;
+    });
+    return et;
+  }
+
   void addItem(String date, int time, Item item) {
     final et = getOrCreateEatingTime(date);
     switch (time) {
@@ -65,20 +142,17 @@ class NutritionController extends GetxController {
         et.other.add(item);
         break;
     }
-    // no check.refresh() needed; RxList notifies automatically
+
+    // Attach listeners to newly added item
+    item.name.listen((_) => check[date] = et);
+    item.state.listen((_) => check[date] = et);
+    item.amount.listen((_) => check[date] = et);
   }
 
-  // toggle state of an item (reactive field)
-  void toggleItemState(Item item, bool value) {
-    item.State = value; // item.state.value = value; triggers observers
-  }
+  void toggleItemState(Item item, bool value) => item.State = value;
 
-  // update amount
-  void updateItemAmount(Item item, double amount) {
-    item.Amount = amount; // item.amount.value = amount;
-  }
+  void updateItemAmount(Item item, double amount) => item.Amount = amount;
 
-  // get selected items for a date
   List<Item> getSelectedItems(String date) {
     final et = check[date];
     if (et == null) return [];
@@ -90,7 +164,6 @@ class NutritionController extends GetxController {
     ];
   }
 
-  // filter and remove non-selected items (in-place)
   void keepOnlySelected(String date) {
     final et = check[date];
     if (et == null) return;
@@ -98,6 +171,6 @@ class NutritionController extends GetxController {
     et.lunch.retainWhere((i) => i.State);
     et.dinner.retainWhere((i) => i.State);
     et.other.retainWhere((i) => i.State);
-    if (et.isEmpty) check.remove(date); // modifies RxMap -> observers triggered
+    if (et.isEmpty) check.remove(date);
   }
 }
