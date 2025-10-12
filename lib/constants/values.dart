@@ -1,0 +1,21 @@
+class Values {
+  static final List<String> gender = ['Male','Female'];
+  static final List<String> list1 = ['Weight Loss', 'Weight Gain', 'Stay Healthy'];
+  static final List<String> list2 = ['','value1', 'vlaue2', 'value3'];
+  static final List<String> list3 = ['','value1', 'vlaue2', 'value3'];
+}
+
+class Regex {
+  static final RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final RegExp emailRegex2 = RegExp(r'^(cse|law|eee|civil)_01\d{14}@lus.ac.bd$');
+  static final RegExp passwordRegex = RegExp(
+    r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$',
+  );
+
+  static bool isValidEmail(String email) {
+    return (emailRegex.hasMatch(email) || emailRegex2.hasMatch(email));
+  }
+  static bool isValidPassword(String password) {
+    return passwordRegex.hasMatch(password);
+  }
+}

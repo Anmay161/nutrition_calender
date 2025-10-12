@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "676581117939",
+    "project_id": "nutri-cal-v1",
+    "storage_bucket": "nutri-cal-v1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676581117939:android:f989a30a1bfb53410e0c86",
+        "android_client_info": {
+          "package_name": "com.example.nutrition_calender"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjs1WfFC_k0BBR9jU2btUoipKQa10hQ4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
