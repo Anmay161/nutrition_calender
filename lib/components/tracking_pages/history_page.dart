@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // your GetX controller
+import 'package:intl/intl.dart';
 import 'package:nutrition_calender/components/data_dummy.dart';
 
 class HistoryPage extends StatelessWidget {
@@ -35,17 +35,23 @@ class HistoryPage extends StatelessWidget {
             final dateStr = entry.key;
             final eatingTime = entry.value;
 
-            // format date nicely
-            final formattedDate = DateFormat('EEE, dd MMM yyyy')
-                .format(DateTime.parse(dateStr));
+            final formattedDate = DateFormat(
+              'EEE, dd MMM yyyy',
+            ).format(DateTime.parse(dateStr));
 
-            // count total items selected that day
-            final totalSelected = [
-              ...eatingTime.breakfast,
-              ...eatingTime.lunch,
-              ...eatingTime.dinner,
-              ...eatingTime.other
-            ].where((item) => item.State).length;
+            // Group selected items by meal
+            final Map<String, List<Item>> selectedMeals = {
+              "Breakfast":
+                  eatingTime.breakfast.where((item) => item.State).toList(),
+              "Lunch": eatingTime.lunch.where((item) => item.State).toList(),
+              "Dinner": eatingTime.dinner.where((item) => item.State).toList(),
+              "Other": eatingTime.other.where((item) => item.State).toList(),
+            };
+
+            final totalSelected = selectedMeals.values.fold<int>(
+              0,
+              (sum, list) => sum + list.length,
+            );
 
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 6),
@@ -53,7 +59,7 @@ class HistoryPage extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: ListTile(
+              child: ExpansionTile(
                 leading: const Icon(Icons.history, color: Colors.blueAccent),
                 title: Text(
                   formattedDate,
@@ -63,11 +69,42 @@ class HistoryPage extends StatelessWidget {
                   "$totalSelected item(s) logged",
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Optionally navigate to detailed view for that date
-                  // e.g., Get.to(() => HistoryDetailPage(date: dateStr));
-                },
+                children:
+                    selectedMeals.entries.where((e) => e.value.isNotEmpty).map((
+                      e,
+                    ) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              e.key,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            ...e.value.map(
+                              (item) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                ),
+                                child: Text(
+                                  "- ${item.Name} (${item.Amount} g)",
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ),
+                            const Divider(),
+                          ],
+                        ),
+                      );
+                    }).toList(),
               ),
             );
           },
