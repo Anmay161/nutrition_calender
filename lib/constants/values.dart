@@ -1,8 +1,8 @@
 class Values {
   static final List<String> gender = ['Male','Female'];
   static final List<String> list1 = ['Weight Loss', 'Weight Gain', 'Stay Healthy'];
-  static final List<String> list2 = ['','value1', 'vlaue2', 'value3'];
-  static final List<String> list3 = ['','value1', 'vlaue2', 'value3'];
+  static final List<String> list2 = ['','1-month', '5-month', '10-month'];
+  static final List<String> list3 = ['','None', 'Diabetes', 'Hypertension', 'Hypotension','Pregnant'];
 }
 
 class Regex {

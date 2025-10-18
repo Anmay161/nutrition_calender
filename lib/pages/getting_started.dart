@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutrition_calender/constants/values.dart';
 import 'package:nutrition_calender/pages/navigate_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 class GettingStarted extends StatefulWidget {
   const GettingStarted({super.key});
@@ -492,9 +493,9 @@ class _GettingStartedState extends State<GettingStarted> {
 
       if (mounted) {
         if (check) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => NavigatePage()),
+          context.pushReplacementTransition(
+            type: PageTransitionType.rightToLeft,
+            child: NavigatePage(),
           );
         } else {
           ScaffoldMessenger.of(
