@@ -58,7 +58,11 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AuthWrapper()));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => AuthWrapper()),
+          (route) => false,
+        );
       }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

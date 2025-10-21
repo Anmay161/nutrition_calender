@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -147,6 +148,7 @@ class _AccountPageState extends State<AccountPage> {
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+              await Hive.box('user_data').clear();
             },
             icon: const Icon(Icons.logout),
           ),

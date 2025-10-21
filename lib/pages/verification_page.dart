@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:nutrition_calender/firebase/user_model.dart';
 import 'package:nutrition_calender/pages/getting_started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,15 +44,18 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         id: user.uid,
         name: widget.userName,
         email: widget.email,
-        phoneNo: widget.phone, 
+        phoneNo: widget.phone,
       );
 
       await FirebaseFirestore.instance
           .collection("users")
           .doc(user.uid)
           .set(newUser.toJson());
-          
+
       if (mounted) {
+        var box = Hive.box('user_data');
+        await box.put('verified', true);
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => GettingStarted()),

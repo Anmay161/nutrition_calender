@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:nutrition_calender/components/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nutrition_calender/constants/values.dart';
@@ -141,9 +142,10 @@ class _LoginPageState extends State<SigninPage> {
 
       if (mounted) {
         if (!isNew) {
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
+            (route) => false,
           );
         }
       }
@@ -153,8 +155,14 @@ class _LoginPageState extends State<SigninPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
-
-        Navigator.pushReplacement(
+        
+        var box = Hive.box('user_data');
+        await box.put('username', _username.text.trim());
+        await box.put('phone', _mobile.text.trim());
+        await box.put('email', _email.text.trim());
+        await box.put('verified', false);
+        
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder:
@@ -164,6 +172,7 @@ class _LoginPageState extends State<SigninPage> {
                   email: _email.text.trim(),
                 ),
           ),
+          (route) => false,
         );
       }
     } on FirebaseAuthException catch (e) {

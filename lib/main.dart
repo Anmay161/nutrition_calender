@@ -24,7 +24,8 @@ Future<void> main() async {
   Hive.registerAdapter(EatingTimeDataAdapter());
 
   await Hive.openBox('nutrition');
-  
+  await Hive.openBox('user_data');
+
   
   runApp(const MyApp());
 }
